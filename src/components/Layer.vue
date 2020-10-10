@@ -1,0 +1,73 @@
+<template>
+  <a-drawer
+    title="设置"
+    placement="right"
+    width="55%"
+    wrapClassName="layer-drawer"
+    :closable="false"
+    :visible="drawerIsShow"
+    :get-container="false"
+    :wrap-style="{ position: 'absolute' }"
+    @close="closedDrawer"
+  >
+    <div class="rate-select">
+      <span>选择倍速:</span>&nbsp;
+      <a-select :value="rate" style="width: 80px" size="small" @change="changeRate">
+        <a-select-option value="1">1×</a-select-option>
+        <a-select-option value="1.25">1.25×</a-select-option>
+        <a-select-option value="1.5">1.5×</a-select-option>
+        <a-select-option value="1.75">1.75×</a-select-option>
+        <a-select-option value="2">2×</a-select-option>
+      </a-select>
+    </div>
+    <video-list></video-list>
+  </a-drawer>
+</template>
+
+<script>
+import VideoList from './VideoList';
+export default {
+  name: 'Layer',
+  components: {VideoList},
+  props: {
+    drawer: {
+      type: Boolean,
+      default: false,
+    }
+  },
+  data() {
+    return {
+      drawerIsShow: false
+    }
+  },
+  watch: {
+    drawer(newValue, oldValue) {
+      this.drawerIsShow = newValue;
+    }
+  },
+  methods: {
+    closedDrawer() {
+      this.$emit('closedDrawer', false);
+    },
+    changeRate(value) {
+      this.$store.commit('changePlayRate', Number(value));
+    },
+  },
+  computed: {
+    rate() {
+      return this.$store.getters.getRate; 
+    }
+  },
+}
+</script>
+
+<style lang="less" scoped>
+  .layer{
+    position: relative;  
+  }
+  .rate-select{
+    text-align: left;
+    margin-bottom: 10px;
+  }
+</style>
+
