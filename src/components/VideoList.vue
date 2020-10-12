@@ -1,33 +1,23 @@
 <template>
   <div class="video-list">
+    <!-- <a-button type="primary" @click="update">刷新</a-button> -->
     <a-list item-layout="horizontal" size="small" :data-source="list">
       <a-list-item slot="renderItem" slot-scope="item, index">
+        <div slot="actions" @click="deleteOne(item)"><a-icon type="close" /></div>
         <a-list-item-meta>
-          <a slot="title" @click="changeSource(item)">{{ item.name }}</a>
+          <a class="video-title" :class="{'active': source.name === item.name}" slot="title" @click="changeSource(item)">{{ item.name }}</a>
         </a-list-item-meta>
       </a-list-item>
     </a-list>
     <p class="chose_file">
       <a-button type="primary"><label for="file">视频选择</label></a-button>
       <input type="file" id="file" accept="video/*" multiple @change="getvl" />
-      <span v-if="list.length">&nbsp;&nbsp;<a-button type="danger" @click="clearLocal">清除全部</a-button></span>
+      <span v-if="list.length">&nbsp;&nbsp;<a-button type="danger" @click="clearLocalAll">清除全部</a-button></span>
     </p>
   </div>
 </template>
 
 <script>
-function getFileSource(file) {
-  let src = null;
-  const { name, size, type } = file;
-  if (window.createObjcectURL != undefined) {
-    src = window.createOjcectURL(file);
-  } else if (window.URL != undefined) {
-    src = window.URL.createObjectURL(file);
-  } else if (window.webkitURL != undefined) {
-    src = window.webkitURL.createObjectURL(file);
-  }
-  return { src, type, name, size };
-}
 export default {
   name: 'VideoList',
   props: {
@@ -39,15 +29,23 @@ export default {
   data() {
     return {
       drawerIsShow: false,
-      list: []
+      list: [],
+      files: []
     }
   },
   watch: {
   },
+  
   created() {
+    window.addEventListener('beforeunload', e => this.beforeunloadFn(e))
     const localSourceList = localStorage.getItem('sourceList');
     if (localSourceList) {
       this.list  = JSON.parse(localSourceList);
+    }
+  },
+  computed: {
+    source() {
+      return this.$store.getters.getSource;
     }
   },
   methods: {
@@ -59,29 +57,57 @@ export default {
         }
       });
       if (flag) {
-        this.list.unshift(source);
+        this.list.push(source);
       }
     },
     getvl(e) {
       const filesObj = e.target.files;
+      this.formatVideo(filesObj);
+    },
+    formatVideo(filesObj){
       for (const key in filesObj) {
         if (filesObj.hasOwnProperty(key)) {
           const file = filesObj[key];
-          let source = getFileSource(file);
-          this.addVideo(source);
+          this.addVideo(this.getFileSource(file));
         }
       }
-      localStorage.setItem('sourceList', JSON.stringify(this.list));
     },
     changeSource(source) {
       this.$store.commit('changeSource', source);
       this.$store.commit('changePlayRate', 1);
     },
-    clearLocal() {
-      localStorage.removeItem('sourceList');
+    clearLocalAll() {
       this.list = [];
+      localStorage.clear('sourceList');
+    },
+    deleteOne(item){
+      this.list = this.list.filter(v => v.name !== item.name);
+    },
+    update() {
+      this.list.map(item => {
+        const {src} = this.getFileSource(item.file);
+        item.src = src;
+      });
+    },
+    getFileSource(file) {
+      let src = null;
+      const { name, size, type } = file;
+      if (window.createObjcectURL != undefined) {
+        src = window.createOjcectURL(file);
+      } else if (window.URL != undefined) {
+        src = window.URL.createObjectURL(file);
+      } else if (window.webkitURL != undefined) {
+        src = window.webkitURL.createObjectURL(file);
+      }
+      return { src, type, name, size, file };
+    },
+    beforeunloadFn(e) {
+      localStorage.setItem('sourceList', JSON.stringify(this.list));
     }
   },
+  destroyed() {
+    window.removeEventListener('beforeunload', e => this.beforeunloadFn(e))
+  }
 }
 </script>
 <style lang="less" scoped>
@@ -95,6 +121,11 @@ export default {
   }
   /deep/.ant-list-item-meta-title{
     text-align: left;
+  }
+  .video-title{
+    &.active{
+      color: #1890ff;
+    }
   }
 </style>
 

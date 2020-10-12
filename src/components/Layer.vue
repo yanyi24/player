@@ -1,8 +1,7 @@
 <template>
   <a-drawer
-    title="设置"
     placement="right"
-    width="55%"
+    width="75%"
     wrapClassName="layer-drawer"
     :closable="false"
     :visible="drawerIsShow"
@@ -12,7 +11,7 @@
   >
     <div class="rate-select">
       <span>选择倍速:</span>&nbsp;
-      <a-select :value="rate" style="width: 80px" size="small" @change="changeRate">
+      <a-select :value="rate + '×'" style="width: 80px" size="small" @change="changeRate">
         <a-select-option value="1">1×</a-select-option>
         <a-select-option value="1.25">1.25×</a-select-option>
         <a-select-option value="1.5">1.5×</a-select-option>
