@@ -14,6 +14,9 @@ export default new Vuex.Store({
     },
     changePlayRate(state, rate) {
       state.playRate = rate;
+    },
+    setPlayedDate(state, date) {
+      state.currentSource.date = date;
     }
   },
   actions: {

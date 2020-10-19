@@ -31,22 +31,26 @@ export default {
   },
   methods: {
     canplay() {
-      console.log(222);
+      console.log(this.player);
       console.log(this.player.duration);
     },
     ended() {
-
+      this.$store.commit('setPlayedDate', this.player.currentTime);
     },
     pause() {
-
+      this.$store.commit('setPlayedDate', this.player.currentTime);
+      this.player.pause();
     },
     play() {
-      
+      this.player.play();
     }
   },
   watch: {
     playRate(newValue, oldValue) {
       this.player.playbackRate = newValue;
+    },
+    'source.src'(newValue, oldValue){
+      this.play();
     }
   },
   computed: {

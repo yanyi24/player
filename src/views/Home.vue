@@ -26,19 +26,27 @@ export default {
   },
   data() {
     return {
-      drawerIsShow: false
+      drawerIsShow: false,
+      isMobile: false
     };
   },
   methods: {
     ctrDrawer() {
       this.drawerIsShow = !this.drawerIsShow;
+    },
+    _isMobile(){
+      let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+      return flag;
     }
   },
   computed: {
     source() {
       return this.$store.getters.getSource;
     }
-  }
+  },
+  mounted () {
+    this.isMobile = this._isMobile()
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -47,8 +55,9 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    width: 100%;
     .container{
-      height: 80%;
+      height: 100%;
       position: relative;
       overflow: hidden;
     }

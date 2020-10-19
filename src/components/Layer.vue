@@ -62,11 +62,14 @@ export default {
 
 <style lang="less" scoped>
   .layer{
-    position: relative;  
+    position: relative;
   }
   .rate-select{
     text-align: left;
     margin-bottom: 10px;
+  }
+  /deep/.ant-drawer-content{
+    overflow: hidden;
   }
 </style>
 
