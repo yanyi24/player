@@ -114,8 +114,6 @@ export default {
       } else if (window.webkitURL != undefined) {
         src = window.webkitURL.createObjectURL(file);
       }
-      const videoInfo = getVideoBase64(src);
-      
       return new Promise((resolve, reject) => {
         getVideoBase64(src).then(res => {
           poster = res.dataURL;

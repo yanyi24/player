@@ -8,6 +8,9 @@
     @ended="ended"
     @pause="pause"
     @play="play"
+    @abort="abort"
+    @playing="playing"
+    @timeupdate="timeupdate"
     :src="source.src"
     :autoplay="autoplay"
   ></video>
@@ -27,29 +30,36 @@ export default {
   },
   mounted () {
     this.player = this.$refs.player;
-    console.log(this.player);
   },
   methods: {
     canplay() {
-      console.log(this.player);
-      console.log(this.player.duration);
+      // console.log(this.player);
+      // console.log(this.player.duration);
     },
     ended() {
       this.$store.commit('setPlayedDate', this.player.currentTime);
     },
     pause() {
-      this.$store.commit('setPlayedDate', this.player.currentTime);
       this.player.pause();
     },
     play() {
       this.player.play();
+    },
+    abort() {
+      this.player.currentTime = this.source.date || 0;
+      console.log(this.source);
+    },
+    playing() {
+    },
+    timeupdate() {
+      this.$store.commit('setPlayedDate', this.player.currentTime);
     }
   },
   watch: {
     playRate(newValue, oldValue) {
       this.player.playbackRate = newValue;
     },
-    'source.src'(newValue, oldValue){
+    source(newValue, oldValue){
       this.play();
     }
   },

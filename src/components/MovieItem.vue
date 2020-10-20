@@ -7,7 +7,11 @@
     <div class="detail">
       <div class="title" :class="{'active': source.name === item.name}">{{item.name}}</div>
       <!-- <div class="author">{{item.author}}</div> -->
-      <div class="date" :class="{'hot': item.date === item.duration}" v-if="item.date">{{item.date | formateTime}}</div>
+      <div v-if="item.date" class="date" :class="{'hot': item.date === item.duration}">
+        <span v-if="item.date === item.duration">已播完</span>
+        <span v-else>上次播放到：{{item.date | formateTime}}</span>
+        
+      </div>
     </div>
     <div class="delete" @click.stop="deleteOne"><a-icon type="close" /></div>
   </div>
@@ -27,7 +31,7 @@ export default {
   
   methods: {
     changeSource(source) {
-      console.log(this.item);
+      // console.log(this.item);
       this.$store.commit('changeSource', this.item);
       this.$store.commit('changePlayRate', 1);
     },
@@ -97,12 +101,12 @@ export default {
         width: auto;
         padding: 3px;
         line-height: 1;
-        background-color: #31C2F2;
-        color: #fff;
+        color: #999;
         font-size: 12px;
         border-radius: 2px;
         &.hot {
           background-color: #ff6060;
+          color: #fff;
         }
       }
     }
