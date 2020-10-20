@@ -19,7 +19,7 @@ function getVideoBase64(url) {
     video.setAttribute('src', url);
     video.setAttribute('width', 400);
     video.setAttribute('height', 240);
-    video.currentTime = 5;
+    video.currentTime = 7;
     video.addEventListener('loadeddata', function () {
       let canvas = document.createElement("canvas"),
           width = video.width, //canvas的尺寸和图片一样
@@ -54,7 +54,7 @@ export default {
   
   created() {
     const localSourceList = JSON.parse(localStorage.getItem('sourceList'));
-    if (localSourceList.length) {
+    if (localSourceList && localSourceList.length) {
       this.$store.commit('setSourceList', localSourceList);
     }
   },
