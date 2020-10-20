@@ -11,16 +11,14 @@
     @abort="abort"
     @playing="playing"
     @timeupdate="timeupdate"
-    :src="source.src"
+    :src="currentSource.src"
     :autoplay="autoplay"
   ></video>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
-  props: {
-    source: Object,
-  },
   name: 'Player',
   data() {
     return {
@@ -33,11 +31,12 @@ export default {
   },
   methods: {
     canplay() {
-      // console.log(this.player);
-      // console.log(this.player.duration);
     },
     ended() {
       this.$store.commit('setPlayedDate', this.player.currentTime);
+      if (this.loop) {
+        this.$store.commit('switchNextSource');
+      }
     },
     pause() {
       this.player.pause();
@@ -46,8 +45,7 @@ export default {
       this.player.play();
     },
     abort() {
-      this.player.currentTime = this.source.date || 0;
-      console.log(this.source);
+      this.player.currentTime = this.currentSource.date || 0;
     },
     playing() {
     },
@@ -56,17 +54,16 @@ export default {
     }
   },
   watch: {
-    playRate(newValue, oldValue) {
+    getRate(newValue, oldValue) {
       this.player.playbackRate = newValue;
     },
-    source(newValue, oldValue){
-      this.play();
-    }
   },
   computed: {
-    playRate() {
-      return this.$store.getters.getRate;
-    }
+    ...mapGetters([
+      'currentSource',
+      'getRate',
+      'loop'
+    ])
   },
 }
 </script>

@@ -9,15 +9,21 @@
     :wrap-style="{ position: 'absolute' }"
     @close="closedDrawer"
   >
-    <div class="rate-select">
-      <span>选择倍速:</span>&nbsp;
-      <a-select :value="rate + '×'" style="width: 80px" size="small" @change="changeRate">
-        <a-select-option value="1">1×</a-select-option>
-        <a-select-option value="1.25">1.25×</a-select-option>
-        <a-select-option value="1.5">1.5×</a-select-option>
-        <a-select-option value="1.75">1.75×</a-select-option>
-        <a-select-option value="2">2×</a-select-option>
-      </a-select>
+    <div class="function">
+      <div class="rate-select">
+        <span>选择倍速:</span>&nbsp;
+        <a-select :value="rate + '×'" style="width: 80px" size="small" @change="changeRate">
+          <a-select-option value="1">1×</a-select-option>
+          <a-select-option value="1.25">1.25×</a-select-option>
+          <a-select-option value="1.5">1.5×</a-select-option>
+          <a-select-option value="1.75">1.75×</a-select-option>
+          <a-select-option value="2">2×</a-select-option>
+        </a-select>
+      </div>
+      <div class="loop-switch">
+        <span>自动播放下个视频：</span>
+        <a-switch size="small" default-checked @change="onChangeLoop" />
+      </div>
     </div>
     <video-list></video-list>
   </a-drawer>
@@ -51,6 +57,9 @@ export default {
     changeRate(value) {
       this.$store.commit('changePlayRate', Number(value));
     },
+    onChangeLoop(checked) {
+      this.$store.commit('switchLoop', checked);
+    },
   },
   computed: {
     rate() {
@@ -70,6 +79,16 @@ export default {
   }
   /deep/.ant-drawer-content{
     overflow: hidden;
+  }
+  .function{
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #666;
+    .loop-switch{
+      margin-bottom: 10px;
+      margin-left: 20px;
+    }
   }
 </style>
 

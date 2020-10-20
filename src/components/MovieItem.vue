@@ -5,12 +5,10 @@
       <div class="duration">{{item.duration | formateTime}}</div>
     </div>
     <div class="detail">
-      <div class="title" :class="{'active': source.name === item.name}">{{item.name}}</div>
-      <!-- <div class="author">{{item.author}}</div> -->
+      <div class="title" :class="{'active': currentIndex === index}">{{item.name}}</div>
       <div v-if="item.date" class="date" :class="{'hot': item.date === item.duration}">
         <span v-if="item.date === item.duration">已播完</span>
         <span v-else>上次播放到：{{item.date | formateTime}}</span>
-        
       </div>
     </div>
     <div class="delete" @click.stop="deleteOne"><a-icon type="close" /></div>
@@ -18,22 +16,25 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   props: {
     item: Object,
+    index: Number
   },
   name: 'MovieItem',
   computed: {
-    source() {
-      return this.$store.getters.getSource;
-    }
+    ...mapGetters([
+      'currentSource',
+      'currentIndex'
+    ])
   },
   
   methods: {
     changeSource(source) {
-      // console.log(this.item);
       this.$store.commit('changeSource', this.item);
       this.$store.commit('changePlayRate', 1);
+      this.$store.commit('changeSourceIndex', this.index);
     },
     deleteOne() {
       this.$emit('deleteOne', this.item);

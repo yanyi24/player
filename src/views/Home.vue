@@ -6,7 +6,7 @@
         <layer :drawer="drawerIsShow" @closedDrawer="drawerIsShow=false"></layer>
       </div>
       <div class="player-container">
-        <player :source="source"></player>
+        <player></player>
       </div>
     </div>
   </div>
@@ -37,11 +37,6 @@ export default {
     _isMobile(){
       let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
       return flag;
-    }
-  },
-  computed: {
-    source() {
-      return this.$store.getters.getSource;
     }
   },
   mounted () {

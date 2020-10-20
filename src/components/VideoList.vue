@@ -1,6 +1,6 @@
 <template>
   <div class="video-list">
-      <movie-item v-for="item in list" :key="item.name" :item="item" @deleteOne="deleteOne"></movie-item>
+    <movie-item v-for="(item, i) in list" :key="item.name" :index="i" :item="item" @deleteOne="deleteOne"></movie-item>
     <p class="chose_file">
       <a-button type="primary"><label for="file">视频选择</label></a-button>
       <input type="file" id="file" accept="video/*" multiple @change="getVideo" />
@@ -19,7 +19,7 @@ function getVideoBase64(url) {
     video.setAttribute('src', url);
     video.setAttribute('width', 400);
     video.setAttribute('height', 240);
-    video.currentTime = 7;
+    video.currentTime = 5;
     video.addEventListener('loadeddata', function () {
       let canvas = document.createElement("canvas"),
           width = video.width, //canvas的尺寸和图片一样
@@ -34,6 +34,7 @@ function getVideoBase64(url) {
   })
 }
 import MovieItem from './MovieItem';
+import { mapGetters } from 'vuex'
 export default {
   name: 'VideoList',
   components: {MovieItem},
@@ -46,25 +47,22 @@ export default {
   data() {
     return {
       drawerIsShow: false,
-      list: [],
-      files: []
     }
   },
   watch: {
   },
   
   created() {
-    window.addEventListener('beforeunload', e => this.beforeunloadFn(e))
-    const localSourceList = localStorage.getItem('sourceList');
-    if (localSourceList) {
-      this.list  = JSON.parse(localSourceList);
+    const localSourceList = JSON.parse(localStorage.getItem('sourceList'));
+    if (localSourceList.length) {
+      this.$store.commit('setSourceList', localSourceList);
     }
   },
   computed: {
-    source() {
-      console.log(this.$store.getters.getSource);
-      return this.$store.getters.getSource;
-    }
+    ...mapGetters([
+      'currentSource',
+      'list',
+    ])
   },
   methods: {
     addVideo(source) {
@@ -75,7 +73,7 @@ export default {
         }
       });
       if (flag) {
-        this.list.push(source);
+        this.$store.commit('addSource', source);
       }
     },
     getVideo(e) {
@@ -93,8 +91,7 @@ export default {
       }
     },
     clearLocalAll() {
-      this.list = [];
-      localStorage.clear('sourceList');
+      this.$store.commit('clearListAll');
     },
     deleteOne(item){
       this.list = this.list.filter(v => v.name !== item.name);
@@ -122,13 +119,7 @@ export default {
         });
       });
     },
-    beforeunloadFn(e) {
-      localStorage.setItem('sourceList', JSON.stringify(this.list));
-    }
   },
-  destroyed() {
-    window.removeEventListener('beforeunload', e => this.beforeunloadFn(e))
-  }
 }
 </script>
 <style lang="less" scoped>
